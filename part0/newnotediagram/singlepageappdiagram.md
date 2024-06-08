@@ -13,4 +13,4 @@ Note over browser, server: JS file runs code that fetches data.json file
 browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
 server->>browser: JSON file with note data
 Note over browser, server: Browser renders fetched note data
-```mermaid
+```
