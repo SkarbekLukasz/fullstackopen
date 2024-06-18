@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import Phonebook from './components/Phonebook'
+import Form from './components/Form.jsx'
 import Numbers from './components/Numbers'
+import SearchField from './components/SearchField.jsx'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -25,7 +26,6 @@ const App = () => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault()
-
     if(persons.some(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook`)
     } else {
@@ -43,7 +43,11 @@ const App = () => {
 
   return (
     <div>
-      <Phonebook handleNameChange={handleNameChange} handleFormSubmit={handleFormSubmit} handleNumberChange={handleNumberChange} handleFilterChange={handleFilterChange}/>
+      <h2>Phonebook</h2>
+      <SearchField handleFilterChange={handleFilterChange}/>
+      <h2>Add a new</h2>
+      <Form handleNameChange={handleNameChange} handleFormSubmit={handleFormSubmit} handleNumberChange={handleNumberChange}/>
+      <h2>Numbers</h2>
       <Numbers persons={persons} personFilter={personFilter}/>
     </div>
   )
