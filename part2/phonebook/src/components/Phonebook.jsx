@@ -1,7 +1,11 @@
-const Phonebook = ({handleNameChange, handleNumberChange, handleFormSubmit}) => {
+const Phonebook = ({handleNameChange, handleNumberChange, handleFormSubmit, handleFilterChange}) => {
     return(
       <div>
       <h2>Phonebook</h2>
+        <div>
+            filter shown with: <input onChange={handleFilterChange}/>
+        </div>
+      <h2>Add a new</h2>
       <form onSubmit={handleFormSubmit}>
         <div>
             name: <input onChange={handleNameChange}/>
