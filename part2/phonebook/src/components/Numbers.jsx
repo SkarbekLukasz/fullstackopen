@@ -1,6 +1,6 @@
 const Person = ({name, number}) => {
     return(
-        <p key={name}>{name} {number}</p>
+        <p>{name} {number}</p>
     )
 }
 
@@ -10,7 +10,7 @@ const Numbers = ({persons, personFilter}) => {
       <div>
         <h2>Numbers</h2>
         {
-            filteredPersons.map(person => <Person name={person.name} number={person.number}/>)
+            filteredPersons.map(person => <Person key={person.name} name={person.name} number={person.number}/>)
         }
       </div>
     )
