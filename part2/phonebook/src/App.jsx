@@ -2,21 +2,16 @@ import { useState, useEffect } from 'react'
 import Form from './components/Form.jsx'
 import Numbers from './components/Numbers'
 import SearchField from './components/SearchField.jsx'
-import axios from 'axios'
+import personsService from './services/persons.js'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [personFilter, setPersonFilter] = useState('')
-  const baseUrl = 'http://localhost:3001/persons'
 
   useEffect(() => {
-    axios
-    .get("http://localhost:3001/persons")
-    .then(response => {
-      setPersons(response.data)
-    })
+    personsService.getAll().then(initialPersons => setPersons(initialPersons))
   }, [])
 
   const handleNameChange = (event) => {
@@ -35,13 +30,9 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
     } else {
       const newPerson = {name: newName, number: newNumber}
-      axios
-      .post(baseUrl, newPerson)
-      .then(response => {
-        setPersons(persons.concat(response.data))
-        setNewName('')
-        setNewNumber('')
-      })
+      personsService.save(newPerson).then(savedPerson => setPersons(persons.concat(savedPerson)))
+      setNewName('')
+      setNewNumber('')
     }
   }
 
