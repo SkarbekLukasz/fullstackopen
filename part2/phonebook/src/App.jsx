@@ -9,6 +9,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [personFilter, setPersonFilter] = useState('')
+  const baseUrl = 'http://localhost:3001/persons'
 
   useEffect(() => {
     axios
@@ -34,9 +35,13 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
     } else {
       const newPerson = {name: newName, number: newNumber}
-      setPersons(persons.concat(newPerson))
-      setNewName('')
-      setNewNumber('')
+      axios
+      .post(baseUrl, newPerson)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
     }
   }
 
