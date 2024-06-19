@@ -41,6 +41,15 @@ const App = () => {
     setPersonFilter(inputChange)
   }
 
+  const handleDelete = (id, name) => {
+    if(window.confirm(`Delete ${name}`)) {
+      personsService.deletePerson(id).then(deleted => {
+        setPersons(persons.filter(person => person.id != deleted.id))
+        alert(`${deleted.name} deleted sucessfully!`)
+      })
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -48,7 +57,7 @@ const App = () => {
       <h2>Add a new</h2>
       <Form handleNameChange={handleNameChange} handleFormSubmit={handleFormSubmit} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      <Numbers persons={persons} personFilter={personFilter}/>
+      <Numbers persons={persons} personFilter={personFilter} handleDelete={handleDelete}/>
     </div>
   )
 }
