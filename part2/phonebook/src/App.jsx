@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Form from './components/Form.jsx'
 import Numbers from './components/Numbers'
 import SearchField from './components/SearchField.jsx'
+import Notification from './components/Notification.jsx'
 import personsService from './services/persons.js'
 
 const App = () => {
@@ -9,6 +10,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [personFilter, setPersonFilter] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
   useEffect(() => {
     personsService.getAll().then(initialPersons => setPersons(initialPersons))
@@ -24,6 +26,12 @@ const App = () => {
     setNewNumber(inputChange)
   }
 
+  const showNotificationMessage = (name, message) => {
+    const notification = `${message} ${name}`
+    setSuccessMessage(notification)
+    setTimeout(() => setSuccessMessage(''), 5000)
+  }
+
   const handleFormSubmit = (event) => {
     event.preventDefault()
     if(persons.some(person => person.name === newName)) {
@@ -31,12 +39,14 @@ const App = () => {
         const person = persons.find(person => person.name === newName)
         const updatePerson = {...person, number: newNumber}
         personsService.update(updatePerson).then(updatedPerson => setPersons(persons.map(person => person.name !== updatedPerson.name ? person : updatedPerson)))
+        showNotificationMessage(newName, 'Edited')
         setNewName('')
         setNewNumber('')
       }
     } else {
       const newPerson = {name: newName, number: newNumber}
       personsService.save(newPerson).then(savedPerson => setPersons(persons.concat(savedPerson)))
+      showNotificationMessage(newName, 'Added')
       setNewName('')
       setNewNumber('')
     }
@@ -59,6 +69,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage}/>
       <SearchField handleFilterChange={handleFilterChange}/>
       <h2>Add a new</h2>
       <Form handleNameChange={handleNameChange} handleFormSubmit={handleFormSubmit} handleNumberChange={handleNumberChange}/>
