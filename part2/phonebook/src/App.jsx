@@ -10,7 +10,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [personFilter, setPersonFilter] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState('')
+  const [errorNotification, setErrorNotification] = useState(false)
 
   useEffect(() => {
     personsService.getAll().then(initialPersons => setPersons(initialPersons))
@@ -26,10 +27,10 @@ const App = () => {
     setNewNumber(inputChange)
   }
 
-  const showNotificationMessage = (name, message) => {
-    const notification = `${message} ${name}`
-    setSuccessMessage(notification)
-    setTimeout(() => setSuccessMessage(''), 5000)
+  const showNotificationMessage = (message) => {
+    const notification = message
+    setNotificationMessage(notification)
+    setTimeout(() => setNotificationMessage(''), 5000)
   }
 
   const handleFormSubmit = (event) => {
@@ -38,15 +39,27 @@ const App = () => {
       if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         const person = persons.find(person => person.name === newName)
         const updatePerson = {...person, number: newNumber}
-        personsService.update(updatePerson).then(updatedPerson => setPersons(persons.map(person => person.name !== updatedPerson.name ? person : updatedPerson)))
-        showNotificationMessage(newName, 'Edited')
-        setNewName('')
-        setNewNumber('')
+        personsService
+        .update(updatePerson)
+        .then(updatedPerson => {
+          setPersons(persons.map(person => person.name !== updatedPerson.name ? person : updatedPerson))
+          showNotificationMessage(`Edited ${newName}`)
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(error => {
+          setErrorNotification(true)
+          showNotificationMessage(`Information of ${newName} has already been removed from server`)
+          setPersons(persons.filter(person => person.name !== newName))
+          setNewName('')
+          setNewNumber('')
+          setTimeout(() => setErrorNotification(false), 5000)
+        })
       }
     } else {
       const newPerson = {name: newName, number: newNumber}
       personsService.save(newPerson).then(savedPerson => setPersons(persons.concat(savedPerson)))
-      showNotificationMessage(newName, 'Added')
+      showNotificationMessage(`Added ${newName}`)
       setNewName('')
       setNewNumber('')
     }
@@ -69,7 +82,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successMessage}/>
+      <Notification message={notificationMessage} error={errorNotification}/>
       <SearchField handleFilterChange={handleFilterChange}/>
       <h2>Add a new</h2>
       <Form handleNameChange={handleNameChange} handleFormSubmit={handleFormSubmit} handleNumberChange={handleNumberChange}/>
