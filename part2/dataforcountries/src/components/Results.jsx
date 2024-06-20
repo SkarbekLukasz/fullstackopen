@@ -1,6 +1,14 @@
-const Results = ({countries, keyword}) => {
+import Country from "./Country"
+
+const Results = ({countries, keyword, handleShowCountry, selectedCountry}) => {
 
     if(keyword === '') return null
+
+    if(selectedCountry != null) {
+        return(
+            <Country country={selectedCountry}/>
+        )
+    }
 
     const processData = (countries, keyword) => countries.filter(country => country.name.common.toLowerCase().includes(keyword.toLowerCase()))
     const filteredCountries = processData(countries, keyword)
@@ -12,25 +20,13 @@ const Results = ({countries, keyword}) => {
     } else if(filteredCountries.length <= 10 && filteredCountries.length > 1) {
         return(
             <div>
-                {filteredCountries.map(entry => <p key={entry.name.common}>{entry.name.common}</p>)}
+                {filteredCountries.map(entry => <p key={entry.name.common}>{entry.name.common} <button key={entry.name.common} onClick={() => handleShowCountry(entry)}>show</button></p>)}
             </div>
             
         )
     } else if(filteredCountries.length === 1){
-        const { name, capital, area, languages, flags } = filteredCountries[0]
         return(
-            <div>
-                <h2>{name.common}</h2>
-                <p>capital {capital}</p>
-                <p>area {area}</p>
-                <h3>languages</h3>
-                <ul>
-                    {Object.entries(languages)
-                    .map(([key, value]) => (<li key={key}>{value}</li>))}
-                </ul>
-                <br/>
-                <img src={flags.png} alt="Flag" style={{maxWidth: 200, maxHeight: 200}}/>
-            </div>
+            <Country country={filteredCountries[0]}/>
         )
     } else {
         return(
