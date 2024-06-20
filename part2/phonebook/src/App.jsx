@@ -47,7 +47,7 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
-        .catch(error => {
+        .catch(() => {
           setErrorNotification(true)
           showNotificationMessage(`Information of ${newName} has already been removed from server`)
           setPersons(persons.filter(person => person.name !== newName))
